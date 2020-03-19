@@ -1,0 +1,25 @@
+{
+  "name": "scrapers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generateRandomInts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gwilken/scrapers.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gwilken/scrapers/issues"
+  },
+  "homepage": "https://github.com/gwilken/scrapers#readme",
+  "dependencies": {
+    "@slack/webhook": "^5.0.2",
+    "axios": "^0.19.2",
+    "puppeteer": "^2.1.1",
+    "user-agents": "^1.0.543"
+  }
+}
