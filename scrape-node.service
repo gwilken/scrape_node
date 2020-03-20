@@ -1,0 +1,20 @@
+[Unit]
+Description=scrape-node service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/scrape_node
+
+ExecStart=/bin/bash /root/scrape_node/start.sh
+
+Restart=on-failure
+RestartSec=5                        # Restart service after 5 seconds if node s$
+StandardOutput=syslog               # Output to syslog
+StandardError=syslog                # Output to syslog
+SyslogIdentifier=scrape-node
+
+[Install]
+WantedBy=multi-user.target
+Alias=status-server.service
