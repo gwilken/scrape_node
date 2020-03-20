@@ -3,43 +3,40 @@ const puppeteer = require('puppeteer');
 const { IncomingWebhook } = require('@slack/webhook');
 const log = require('../utils/log');
 
-const SLACK_URL = process.env.SLACK_URL || 'https://hooks.slack.com/services/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';
-const webhook = new IncomingWebhook(SLACK_URL);
-
-const IP_ADDR = process.env.IP || null;
-
 
 class ScrapeManager {
   constructor() {
-    this.allowRun = false
-    this.baseUrl = 'https://www.wrecksite.eu'
-    this.sessionId = null
-    this.cookie = ''
-    this.commandUrl = 'http://127.0.0.1:8888'
-    this.scrapeUrl = null
-    this.sleepMin = 3000
-    this.sleepMax = 5000
-    this.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/527.16 (KHTML, like Gecko) Chrome/63.0.3282.19 Safari/536.36'
-    this.errorCount = 0
-    this.errorMax = 10
-    this.browser = null
-    this.currentTargetUrl = null
-    this.currentTargetId = null
-    this.currentTargetStatus = null
-    this.currentTargetBodyHTML = null
+    this.ipAddress = process.env.IP || null;
+    this.allowRun = false;
+    this.slackUrl = 'https://hooks.slack.com/services/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';
+    this.slackWebhook = new IncomingWebhook(this.slackUrl);
+    this.cookie = '';
+    this.commandUrl = 'http://127.0.0.1:8888';
+    this.scrapeUrl = null;
+    this.sleepMin = 3000;
+    this.sleepMax = 5000;
+    this.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/517.16 (KHTML, like Gecko) Chrome/63.0.3282.19 Safari/536.36';
+    this.errorCount = 0;
+    this.errorMax = 10;
+    this.browser = null;
+    this.currentTargetUrl = null;
+    this.currentTargetId = null;
+    this.currentTargetStatus = null;
+    this.currentTargetBodyHTML = null;
+    this.authorization = 'cmVkaXNhdXRob3JpemF0aW9uIQ==';
   }
   
   
   async start() {
     this.allowRun = true
-    this.browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    log('Starting...')
     this.loop()
   }
   
 
   async stop() {
     this.allowRun = false
-    await this.browser.close();
+    log('Stopping...')
   }
 
 
@@ -50,7 +47,6 @@ class ScrapeManager {
       await this.sendDataToControl()
       await this.sleep()
       await this.checkErrorStatus()
-
       this.loop()
     }
   }
@@ -67,7 +63,7 @@ class ScrapeManager {
 
     const response = await axios.get(this.commandUrl + '/next-target', {
       headers: {
-        Authorization: 'cmVkaXNhdXRob3JpemF0aW9uIQ=='
+        Authorization: this.authorization
       }
     })
   
@@ -91,6 +87,11 @@ class ScrapeManager {
     if (this.currentTargetUrl) {
       this.currentTargetStatus = null
       this.currentTargetBodyHTML = null
+
+      let url = new URL(this.currentTargetUrl)
+      let baseUrl = `${url.protocol}//${url.hostname}`
+
+      this.browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
       const page = await this.browser.newPage();
       await page.setUserAgent(this.userAgent);
@@ -129,12 +130,12 @@ class ScrapeManager {
       });
 
       const cookies = [{
-        'url': this.baseUrl,
+        'url': baseUrl,
         'name': 'UserSettings',
         'value': this.cookie
       },
       {
-        'url': this.baseUrl,
+        'url': baseUrl,
         'name': 'ASP.NET_SessionId',
         'value': this.generateRandomSessionId()
       }];
@@ -143,6 +144,8 @@ class ScrapeManager {
       const response = await page.goto(this.currentTargetUrl, { waitUntil: 'networkidle2' });
 
       let bodyHTML = await page.evaluate(() => document.body.innerHTML);
+
+      await this.browser.close();
 
       this.currentTargetStatus = response.headers().status
       this.currentTargetBodyHTML = bodyHTML
@@ -161,14 +164,14 @@ class ScrapeManager {
   
         // post data to c2 server
         let res = await axios.post(this.commandUrl + '/data', {
-          ip: IP_ADDR,
+          ip: this.ipAddress,
           timestamp: Date.now(),
           targetId: this.currentTargetId, 
           data: this.currentTargetBodyHTML,
           status: this.currentTargetStatus
         }, {
           headers: {
-            Authorization: 'cmVkaXNhdXRob3JpemF0aW9uIQ=='
+            Authorization: this.authorization
           }
         }).catch(err => {
           // TODO: console.log(err)
@@ -205,10 +208,8 @@ class ScrapeManager {
 
       this.stop()
 
-      await this.browser.close();
-
-      await webhook.send({
-        text: `Scraper ${IP_ADDR}: Stopped. Max error count [${this.errorCount}] reached. <@greg>`,
+      await this.slackWebhook.send({
+        text: `Scraper ${this.ipAddress}: Stopped. Max error count [${this.errorCount}] reached. <@greg>`,
       });
 
       this.errorCount = 0
@@ -227,11 +228,11 @@ class ScrapeManager {
           timestamp: Date.now(),
           msg, 
           errorCount: this.errorCount,
-          ip: IP_ADDR,
+          ip: this.ipAddress,
           targetId: this.currentTargetId
         }, {
           headers: {
-            Authorization: 'cmVkaXNhdXRob3JpemF0aW9uIQ=='
+            Authorization: this.authorization
           }
         }).catch(err => {});
       }
@@ -240,12 +241,10 @@ class ScrapeManager {
     })
   }
 
-
   getStatus() {
     return {
+      ip: this.ipAddress,
       allowRun: this.allowRun,
-      baseUrl: this.baseUrl,
-      sessionId: this.sessionId,
       cookie: this.cookie,
       commandUrl: this.commandUrl,
       scrapeUrl: this.scrapeUrl,
@@ -253,6 +252,8 @@ class ScrapeManager {
       sleepMax: this.sleepMax,
       userAgent: this.userAgent,
       errorCount: this.errorCount,
+      authorization :this.authorization,
+      slackUrl: this.slackUrl,
       currentTargetUrl: this.currentTargetUrl,
       currentTargetId: this.currentTargetId,
       currentTargetStatus: this.currentTargetStatus
@@ -260,45 +261,27 @@ class ScrapeManager {
   }
 
   setCookie(value) {
-    this.stop()
     this.cookie = value
-    this.start()
   }
  
   setCommandUrl(value) {
-    this.stop()
     this.commandUrl = value    
-    this.start()
-  }
-  
-  setBaseUrl(value) {
-    this.stop()
-    this.baseUrl = value
-    this.start()
   }
   
   setScrapeUrl(value) {
-    this.stop()
     this.scrapeUrl = value
-    this.start()
   }
 
   setSleepMin(value) {
-    this.stop()
     this.sleepMin = value
-    this.start()
   }
 
   setSleepMax(value) {
-    this.stop()
     this.sleepMax = value
-    this.start()
   }
 
   setUserAgent(value) {
-    this.stop()
     this.userAgent = value
-    this.start()
   }
 
   updateConfig = (obj) => {
@@ -313,9 +296,6 @@ class ScrapeManager {
     }
     if (obj.scrapeUrl) {
       this.setScrapeUrl(obj.scrapeUrl)
-    }
-    if (obj.baseUrl) {
-      this.setBaseUrl(obj.baseUrl)
     }
     if (obj.sleepMin) {
       this.setSleepMin(obj.sleepMin)

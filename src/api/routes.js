@@ -9,7 +9,7 @@ const {
   updateConfig,
   startScrape,
   stopScrape,
-  getStatus
+  getConfig
 } = require('./middleware');
 
 
@@ -28,12 +28,12 @@ router.get('/start',
 router.get('/stop',
   validateMessage,
   stopScrape
-  )
+)
   
   
-router.get('/status',
+router.get('/config',
   validateMessage,
-  getStatus
+  getConfig
 )
 
 router.post('/config',

@@ -32,7 +32,7 @@ const stopScrape = (req, res, next) => {
 }
 
 
-const getStatus = (req, res, next) => {
+const getConfig = (req, res, next) => {
   let status = scrapeManager.getStatus()
   res.status(200).json(status)
 }
@@ -61,5 +61,5 @@ module.exports = {
   updateConfig,
   startScrape,
   stopScrape,
-  getStatus
+  getConfig
 }

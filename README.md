@@ -1,2 +1,4 @@
-# scraper-v2
-headless chrome version
+# scrape_node
+  - headless chrome
+  - http api control
+
