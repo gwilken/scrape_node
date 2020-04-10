@@ -217,7 +217,7 @@ class ScrapeManager {
   }
 
 
-  handleError = (msg) => {
+  handleError(msg) {
     return new Promise( async (resolve) => {
       this.errorCount++
       
@@ -284,7 +284,7 @@ class ScrapeManager {
     this.userAgent = value
   }
 
-  updateConfig = (obj) => {
+  updateConfig(obj) {
     if (obj.allowRun) {
       this.allowRun = obj.allowRun
     }
