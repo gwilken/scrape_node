@@ -308,7 +308,7 @@ class ScrapeManager {
     }
   }
 
-  generateRandomSessionId = () => {
+  generateRandomSessionId() {
     let alpha = 'abcdefghijklmnopqrstuvwxyz012345'
     let alphaArr = alpha.split('')
     let idArr = []
