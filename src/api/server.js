@@ -5,7 +5,7 @@ const routes = require('./routes')
 const bodyParser = require('body-parser')
 const log = require('../utils/log')
 
-const PORT = process.env.API_PORT || 80
+const PORT = process.env.API_PORT || 8080
 
 const app = express()
 
