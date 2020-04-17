@@ -8,22 +8,22 @@ class ScrapeManager {
   constructor() {
     this.ipAddress = process.env.IP || null;
     this.allowRun = false;
-    this.slackUrl = '';
+    this.slackUrl = process.env.slackUrl || '';
     this.slackWebhook = new IncomingWebhook(this.slackUrl);
-    this.cookie = '';
-    this.commandUrl = 'http://127.0.0.1:8888';
+    this.cookie = process.env.cookie ||'';
+    this.commandUrl = process.env.commandUrl || 'http://127.0.0.1:8888';
     this.scrapeUrl = null;
-    this.sleepMin = 3000;
-    this.sleepMax = 5000;
-    this.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/517.16 (KHTML, like Gecko) Chrome/63.0.3282.19 Safari/536.36';
+    this.sleepMin = process.env.sleepMin || 3000;
+    this.sleepMax = process.env.sleepMax || 5000;
+    this.userAgent = process.env.userAgent || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/517.16 (KHTML, like Gecko) Chrome/63.0.3282.19 Safari/536.36';
     this.errorCount = 0;
-    this.errorMax = 10;
+    this.errorMax = process.env.errorMax || 10;
     this.browser = null;
     this.currentTargetUrl = null;
     this.currentTargetId = null;
     this.currentTargetStatus = null;
     this.currentTargetBodyHTML = null;
-    this.authorization = '';
+    this.authorization = process.env.authorization || '';
   }
   
   
