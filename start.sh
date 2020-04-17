@@ -2,6 +2,8 @@
 
 export IP=$(ifconfig eth0 | grep "inet " | awk -F" " '{print $2}')
 
+cd src && 
+
 npm i &&
 
-node ./src/api/server.js
+node ./api/server.js
