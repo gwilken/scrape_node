@@ -5,7 +5,7 @@ const router = require('express').Router()
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 const { 
-  validateMessage,
+  // validateMessage,
   updateConfig,
   startScrape,
   stopScrape,
@@ -20,34 +20,34 @@ router.get('/health', (req, res) => {
 
 
 router.get('/start',
-  validateMessage,
+  // validateMessage,
   startScrape
 )
 
 
 router.get('/stop',
-  validateMessage,
+  // validateMessage,
   stopScrape
 )
   
   
 router.get('/config',
-  validateMessage,
+  // validateMessage,
   getConfig
 )
 
 router.post('/config',
-  validateMessage,
+  // validateMessage,
   jsonParser,
   updateConfig
 )
 
 
-router.get('/kill', (req, res) => {
-  validateMessage,
-  res.status(200).json('OK'),
-  process.exit()
-})
+// router.get('/kill', (req, res) => {
+//   validateMessage,
+//   res.status(200).json('OK'),
+//   process.exit()
+// })
 
 
 module.exports = router
