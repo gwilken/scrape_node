@@ -43,4 +43,11 @@ router.post('/config',
 )
 
 
+router.get('/kill',
+  validateMessage,
+  res.status(200).json('OK'),
+  process.exit()
+)
+
+
 module.exports = router
