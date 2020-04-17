@@ -8,7 +8,7 @@ class ScrapeManager {
   constructor() {
     this.ipAddress = process.env.IP || null;
     this.allowRun = false;
-    this.slackUrl = 'https://hooks.slack.com/services/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';
+    this.slackUrl = '';
     this.slackWebhook = new IncomingWebhook(this.slackUrl);
     this.cookie = '';
     this.commandUrl = 'http://127.0.0.1:8888';
@@ -23,7 +23,7 @@ class ScrapeManager {
     this.currentTargetId = null;
     this.currentTargetStatus = null;
     this.currentTargetBodyHTML = null;
-    this.authorization = 'cmVkaXNhdXRob3JpemF0aW9uIQ==';
+    this.authorization = '';
   }
   
   
