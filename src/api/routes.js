@@ -14,7 +14,6 @@ const {
 
 
 router.get('/health', (req, res) => {
-  log('OK')
   res.status(200).json('OK')
 })
 

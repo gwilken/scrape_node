@@ -6,23 +6,24 @@ const log = require('../utils/log');
 
 class ScrapeManager {
   constructor() {
-    this.ipAddress = process.env.IP || null;
+    this.ipAddress = process.env.IP || '127.0.0.1';
     this.allowRun = false;
+    this.isRunning = false;
     this.slackUrl = process.env.slackUrl || '';
     this.slackWebhook = new IncomingWebhook(this.slackUrl);
     this.cookie = process.env.cookie ||'';
     this.commandUrl = process.env.commandUrl || 'http://127.0.0.1:8888';
-    this.scrapeUrl = null;
+    this.scrapeUrl = 0;
     this.sleepMin = process.env.sleepMin || 3000;
     this.sleepMax = process.env.sleepMax || 5000;
     this.userAgent = process.env.userAgent || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/517.16 (KHTML, like Gecko) Chrome/63.0.3282.19 Safari/536.36';
     this.errorCount = 0;
     this.errorMax = process.env.errorMax || 10;
-    this.browser = null;
-    this.currentTargetUrl = null;
-    this.currentTargetId = null;
-    this.currentTargetStatus = null;
-    this.currentTargetBodyHTML = null;
+    this.browser = 0;
+    this.currentTargetUrl = 0;
+    this.currentTargetId = 0;
+    this.currentTargetStatus = 0;
+    this.currentTargetBodyHTML = 0;
     this.authorization = process.env.authorization || '';
   }
   
@@ -30,24 +31,30 @@ class ScrapeManager {
   async start() {
     this.allowRun = true
     log('Starting...')
-    this.loop()
+    this.isRunning = true
+    // this.loop()
   }
   
 
   async stop() {
     this.allowRun = false
+    this.isRunning = false
+
     log('Stopping...')
   }
 
 
   async loop() {
     if (this.allowRun) {
+      this.isRunning = true
       await this.getNextTargetUrl()
       await this.fetchData()
       await this.sendDataToControl()
       await this.sleep()
       await this.checkErrorStatus()
       this.loop()
+    } else {
+      this.isRunning = false
     }
   }
 
@@ -244,13 +251,14 @@ class ScrapeManager {
   getStatus() {
     return {
       ip: this.ipAddress,
+      isRunning: this.isRunning,
       allowRun: this.allowRun,
       cookie: this.cookie,
       commandUrl: this.commandUrl,
       scrapeUrl: this.scrapeUrl,
       sleepMin: this.sleepMin,
       sleepMax: this.sleepMax,
-      userAgent: this.userAgent,
+      // userAgent: this.userAgent,
       errorCount: this.errorCount,
       authorization :this.authorization,
       slackUrl: this.slackUrl,

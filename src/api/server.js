@@ -26,5 +26,4 @@ app.listen(PORT, function() {
         Authorization: AUTH
       }
     })
-
 })
