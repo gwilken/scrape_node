@@ -2,11 +2,11 @@ const axios = require('axios')
 const puppeteer = require('puppeteer');
 const { IncomingWebhook } = require('@slack/webhook');
 const log = require('../utils/log');
-const ip = require('ip');
+
 
 class ScrapeManager {
   constructor() {
-    this.ipAddress = process.env.IP || ip.address(),
+    this.ipAddress = null;
     this.allowRun = false;
     this.isRunning = false;
     this.slackUrl = process.env.slackUrl || '';
@@ -26,9 +26,18 @@ class ScrapeManager {
     this.currentTargetBodyHTML = 0;
     this.authorization = process.env.authorization || '';
     this.scrapeCount = 0
+
+    this.getPublicIp()
   }
   
-  
+
+  getPublicIp() {
+    axios.get('http://icanhazip.com').then(res => {
+      this.ipAddress = res.data
+    })
+  }
+
+
   async start() {
     log('[ SCRAPE_NODE ] - Starting...')
     this.allowRun = true
