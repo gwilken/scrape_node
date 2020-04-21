@@ -2,11 +2,11 @@ const axios = require('axios')
 const puppeteer = require('puppeteer');
 const { IncomingWebhook } = require('@slack/webhook');
 const log = require('../utils/log');
-
+const ip = require('ip');
 
 class ScrapeManager {
   constructor() {
-    this.ipAddress = process.env.IP || '127.0.0.1';
+    this.ipAddress = process.env.IP || ip.address(),
     this.allowRun = false;
     this.isRunning = false;
     this.slackUrl = process.env.slackUrl || '';
