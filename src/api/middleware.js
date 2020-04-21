@@ -4,6 +4,14 @@ const scrapeManager = require('./ScrapeManager')
 const log = require('../utils/log');
 
 
+const setSecureHeaders = (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, contenttype');
+  next();
+}
+
+
 const handleError = async (msg) => {
 
 }
@@ -57,6 +65,7 @@ const validateMessage = (req, res, next) => {
 
 
 module.exports = {
+  setSecureHeaders,
   validateMessage,
   updateConfig,
   startScrape,

@@ -25,22 +25,22 @@ class ScrapeManager {
     this.currentTargetStatus = 0;
     this.currentTargetBodyHTML = 0;
     this.authorization = process.env.authorization || '';
+    this.scrapeCount = 0
   }
   
   
   async start() {
+    log('[ SCRAPE_NODE ] - Starting...')
     this.allowRun = true
-    log('Starting...')
     this.isRunning = true
     // this.loop()
   }
   
 
   async stop() {
+    log('[ SCRAPE_NODE ] - Stopping...')
     this.allowRun = false
     this.isRunning = false
-
-    log('Stopping...')
   }
 
 
@@ -187,6 +187,7 @@ class ScrapeManager {
   
         if (res) {
           console.log('C2 server response:', res.status)
+          this.scrapeCount++
         } else {
           this.handleError('No response from C2 server /data.')
         }
@@ -251,6 +252,7 @@ class ScrapeManager {
   getStatus() {
     return {
       ip: this.ipAddress,
+      status: this.isRunning ? 'running' : 'stopped',
       isRunning: this.isRunning,
       allowRun: this.allowRun,
       cookie: this.cookie,
@@ -264,7 +266,8 @@ class ScrapeManager {
       slackUrl: this.slackUrl,
       currentTargetUrl: this.currentTargetUrl,
       currentTargetId: this.currentTargetId,
-      currentTargetStatus: this.currentTargetStatus
+      currentTargetStatus: this.currentTargetStatus,
+      scrapeCount: this.scrapeCount
     }
   }
 
