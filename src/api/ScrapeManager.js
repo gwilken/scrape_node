@@ -272,7 +272,7 @@ class ScrapeManager {
       // userAgent: this.userAgent,
       errorCount: this.errorCount,
       authorization :this.authorization,
-      slackUrl: this.slackUrl,
+      // slackUrl: this.slackUrl,
       currentTargetUrl: this.currentTargetUrl,
       currentTargetId: this.currentTargetId,
       currentTargetStatus: this.currentTargetStatus,
