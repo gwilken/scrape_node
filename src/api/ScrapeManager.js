@@ -33,7 +33,7 @@ class ScrapeManager {
 
   getPublicIp() {
     axios.get('http://icanhazip.com').then(res => {
-      this.ipAddress = res.data
+      this.ipAddress = res.data.trim()
     })
   }
 

@@ -24,7 +24,7 @@ app.listen(PORT, () => {
 
   axios.get('http://icanhazip.com').then(res => {
 
-    let ip = res.data
+    let ip = res.data.trim()
 
     axios.post(COMMAND_URL + '/alive', {
         ip,
