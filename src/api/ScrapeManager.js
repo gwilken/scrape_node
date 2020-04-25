@@ -42,7 +42,7 @@ class ScrapeManager {
     log('[ SCRAPE_NODE ] - Starting...')
     this.allowRun = true
     this.isRunning = true
-    // this.loop()
+    this.loop()
   }
   
 
